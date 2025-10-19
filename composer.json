@@ -1,0 +1,22 @@
+{
+  "name": "yakovlevdev/ticket-tracker-backend",
+  "description": "Backend for ticket tracker application",
+  "minimum-stability": "stable",
+  "version": "0.0.1",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Alexey Yakovlev",
+      "email": "info@yakovlevdev.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "TicketTracker\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.4",
+    "ext-pdo": "*"
+  }
+}
