@@ -6,13 +6,13 @@ use PDOException;
 
 class DB
 {
-    private $hostname;
-    private $port;
-    private $dbname;
-    private $username;
-    private $password;
-    private $options;
-    public $db;
+    private string $hostname;
+    private int $port;
+    private string $dbname;
+    private string $username;
+    private string $password;
+    private array $options;
+    public PDO $db;
 
     public function __construct(array $params) {
         $this->hostname = $params['hostname'];

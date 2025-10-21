@@ -13,6 +13,33 @@ class UserController
         $this->userModel = new UserModel();
     }
 
+    public function create(string $username, string $password): array
+    {
+        try {
+            $userData = [
+                'username' => $username,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'role' => 'user',
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            $userId = $this->userModel->create($userData);
+
+            return [
+                'success' => true,
+                'user_id' => $userId,
+                'message' => 'User created successfully'
+            ];
+
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage()
+            ];
+        }
+    }
+
+
     public function getUsers(): void
     {
         try {
@@ -23,5 +50,15 @@ class UserController
             http_response_code(500);
             echo "An error occurred: " . $error->getMessage();
         }
+    }
+
+    public function verifyPassedData(string $username, string $password): ?array
+    {
+        $user = $this->userModel->getByUsername($username);
+        if ($user && password_verify($password, $user['password'])) {
+            unset($user['password']);
+            return $user;
+        }
+        return null;
     }
 }
