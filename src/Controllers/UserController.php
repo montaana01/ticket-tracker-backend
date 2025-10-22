@@ -2,6 +2,7 @@
 
 namespace TicketTracker\Controllers;
 
+use TicketTracker\Helpers\Response;
 use TicketTracker\Models\UserModel;
 
 class UserController
@@ -18,7 +19,7 @@ class UserController
         try {
             $userData = [
                 'username' => $username,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'password_hash' => password_hash($password, PASSWORD_DEFAULT),
                 'role' => 'user',
                 'created_at' => date('Y-m-d H:i:s')
             ];
@@ -44,21 +45,31 @@ class UserController
     {
         try {
             $users = $this->userModel->getAll();
-            header('Content-Type: application/json');
-            echo json_encode($users, JSON_THROW_ON_ERROR);
+            $users = array_map(static function ($userData) {
+                unset($userData['password']);
+                return $userData;
+            }, $users);
+            Response::json(['success' => true, 'data' => $users]);
         } catch (\Exception $error) {
-            http_response_code(500);
-            echo "An error occurred: " . $error->getMessage();
+            Response::json(['success' => false, 'message' => "An error occurred: " . $error->getMessage()], 500);
         }
     }
 
-    public function verifyPassedData(string $username, string $password): ?array
+    public function getUserById(int $id): void
     {
-        $user = $this->userModel->getByUsername($username);
-        if ($user && password_verify($password, $user['password'])) {
-            unset($user['password']);
-            return $user;
+        try {
+            $userData = $this->userModel->get($id);
+            if (!$userData) {
+                Response::json(['error' => 'User not found'], 404);
+                return;
+            }
+            unset($userData['password_hash']);
+            Response::json([
+                'success' => true,
+                'data' => $userData
+            ]);
+        } catch (\Exception $error) {
+            Response::json(['error' => 'Failed to get user'], 500);
         }
-        return null;
     }
 }
