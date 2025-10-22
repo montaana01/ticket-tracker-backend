@@ -12,8 +12,8 @@ class BasicModel
     public function __construct($tableName)
     {
         $this->tableName = $tableName;
-        $config = require __DIR__ . '/../config/params.php';
-        $this->connection = new DB($config['db'])->db;
+        $config = require __DIR__ . '/../Config/params.php';
+        $this->connection = (new DB($config['db']))->db;
     }
 
     public function get(int $id): ?array

@@ -11,7 +11,7 @@ class JwtAuth
 
     public function __construct()
     {
-        $key = require __DIR__ . '/../config/params.php';
+        $key = require __DIR__ . '/../Config/params.php';
         $this->token = $key['JWT'];
     }
 

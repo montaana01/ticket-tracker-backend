@@ -1,5 +1,5 @@
 <?php
-
+// rename this file to params.php
 return [
     'db' => [
         'hostname' => 'hostname',
@@ -7,5 +7,9 @@ return [
         'dbname' => 'dbname',
         'username' => 'username',
         'password' => 'password',
+        'options' => [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        ]
     ],
+    'JWT' => 'example key'
 ];
