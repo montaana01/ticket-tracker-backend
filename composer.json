@@ -16,7 +16,7 @@
     }
   },
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.2",
     "ext-pdo": "*",
     "firebase/php-jwt": "^6.11",
     "nikic/fast-route": "^1.3"
