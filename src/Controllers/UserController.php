@@ -40,6 +40,27 @@ class UserController
         }
     }
 
+    public function getProfile(object $user): void
+    {
+        try {
+            $userId = $user->sub;
+            $userData = $this->userModel->get($userId);
+
+            if (!$userData) {
+                Response::json(['error' => 'User not found'], 404);
+                return;
+            }
+            unset($userData['password_hash']);
+
+            Response::json([
+                'success' => true,
+                'data' => $userData
+            ]);
+
+        } catch (\Exception $error) {
+            Response::json(['error' => 'Failed to get profile'], 500);
+        }
+    }
 
     public function getUsers(): void
     {
