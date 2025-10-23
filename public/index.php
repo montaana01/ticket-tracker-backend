@@ -5,6 +5,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use TicketTracker\Controllers\AuthController;
 use TicketTracker\Middleware\AuthMiddleware;
 use TicketTracker\Controllers\UserController;
+use TicketTracker\Controllers\TicketController;
 use TicketTracker\Helpers\Response;
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -21,18 +22,15 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $router->addRoute('POST', '/auth/sign-up', [AuthController::class, 'signUp']);
     $router->addRoute('POST', '/auth/sign-in', [AuthController::class, 'signIn']);
     //Get user info
-    $router->addRoute('GET', '/api/profile', [UserController::class, 'getProfile']);
-//    //Get user tickets
-//    $router->addRoute('GET', '/api/tickets', [TicketController::class, 'getAllTickets']);
-//    //Get user ticket by ID
-//    $router->addRoute('GET', '/api/tickets/{id:\d+}', [TicketController::class, 'getTicket']);
-//    //Create ticket
-//    $router->addRoute('POST', '/api/ticket', [TicketController::class, 'createTicket']);
+    $router->addRoute('GET', '/api/user/profile', [UserController::class, 'getProfile']);
+    //Ticket paths
+    $router->addRoute('GET', '/api/tickets', [TicketController::class, 'getTickets']);
+    $router->addRoute('GET', '/api/tickets/{id:\d+}', [TicketController::class, 'getTicket']);
+    //Create ticket
+    $router->addRoute('POST', '/api/tickets', [TicketController::class, 'createTicket']);
     //Admins paths:
     $router->addRoute('GET', '/api/admin/users', [UserController::class, 'getUsers']);
     $router->addRoute('GET', '/api/admin/users/{id:\d+}', [UserController::class, 'getUserById']);
-//    $router->addRoute('GET', '/api/admin/statuses', [UserController::class, 'getUsers']);
-//    $router->addRoute('GET', '/api/admin/', [UserController::class, 'getUsers']);
 });
 
 $routeStatus = $dispatcher->dispatch($httpMethod, $uri);
@@ -45,9 +43,11 @@ switch ($routeStatus[0]) {
         $authRequirements = [
             '/auth/sign-up' => null,
             '/auth/sign-in' => null,
-            '/user/profile' => ['user', 'admin'],
-//            '/user/requests' => ['user'],
-//            '/user/request' => ['user'],
+            '/api/user/profile' => ['user', 'admin'],
+            '/api/tickets' => ['user', 'admin'],
+            '/api/tickets/{id}' => ['user', 'admin'],
+            '/api/tickets' => ['user', 'admin'],
+            '/user/request' => ['user'],
             '/api/admin/users' => ['admin'],
             '/api/admin/users/{id}' => ['admin'],
         ];
