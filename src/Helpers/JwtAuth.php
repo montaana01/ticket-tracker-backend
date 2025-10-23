@@ -2,6 +2,7 @@
 
 namespace TicketTracker\Helpers;
 
+use TicketTracker\Helpers\Response;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -12,6 +13,9 @@ class JwtAuth
     public function __construct()
     {
         $key = require __DIR__ . '/../Config/params.php';
+//         if (!$key) {
+//             Response::json(['error'=>'Configuration file does not exist.'], 400)
+//         }
         $this->token = $key['JWT'];
     }
 
