@@ -20,7 +20,7 @@ class AuthController
         $this->userController = new UserController();
     }
 
-    public function register(): void
+    public function signUp(): void
     {
         try {
             $data = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
@@ -52,7 +52,7 @@ class AuthController
         }
     }
 
-    public function login(): void
+    public function signIn(): void
     {
         try {
             $data = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
