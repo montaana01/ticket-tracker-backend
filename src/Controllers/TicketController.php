@@ -21,6 +21,7 @@ class TicketController
 
             $ticketData = [
                 'user_id' => $user->id,
+                'author_id' => $user->id,
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'tag_id' => $data['tag_id'],
@@ -35,7 +36,7 @@ class TicketController
             ], 201);
 
         } catch (\Exception $error) {
-            return Response::json(['error' => 'Failed to create ticket'], 500);
+            return Response::json(['error' => 'Failed to create ticket: '.$error], 500);
         }
     }
 
