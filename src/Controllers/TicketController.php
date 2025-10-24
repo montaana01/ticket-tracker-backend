@@ -20,8 +20,7 @@ class TicketController
             $data = json_decode(file_get_contents('php://input'), true);
 
             $ticketData = [
-                'user_id' => $user->id,
-                'author_id' => $user->id,
+                'author_id' => $user->sub,
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'tag_id' => $data['tag_id'],
@@ -49,7 +48,7 @@ class TicketController
                 return Response::json(['error' => 'Ticket not found'], 404);
             }
 
-            if ($user->role === 'user' && $ticket->author_id !== $user->id) {
+            if ($user->role === 'user' && $ticket->author_id !== $user->sub) {
                 return Response::json(['error' => 'Access denied'], 403);
             }
 
@@ -69,7 +68,7 @@ class TicketController
             if ($user->role === 'admin') {
                 $tickets = $this->ticketModel->getAll();
             } else {
-                $tickets = $this->ticketModel->getByUserId($user->id);
+                $tickets = $this->ticketModel->getByUserId($user->sub);
             }
 
             return Response::json([
@@ -91,7 +90,7 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            $this->ticketModel->updateStatus($id, $data['statusId'], $user->id);
+            $this->ticketModel->updateStatus($id, $data['statusId'], $user->sub);
 
             $ticket = $this->ticketModel->get($id);
 
@@ -114,7 +113,7 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            $this->ticketModel->updateTag($id, $data['tag_id'], $user->id);
+            $this->ticketModel->updateTag($id, $data['tag_id'], $user->sub);
 
             $ticket = $this->ticketModel->get($id);
 

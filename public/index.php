@@ -27,18 +27,18 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $router->addRoute('GET', '/api/user/profile', [UserController::class, 'getProfile']);
     //Ticket paths
     $router->addRoute('GET', '/api/tickets', [TicketController::class, 'getTickets']);
-    $router->addRoute('GET', '/api/tickets/{id:\d+}', [TicketController::class, 'getTicket']);
+    $router->addRoute('GET', '/api/ticket/{id:\d+}', [TicketController::class, 'getTicket']);
     //Create ticket
     $router->addRoute('POST', '/api/tickets', [TicketController::class, 'createTicket']);
 
     //Admins paths:
     $router->addRoute('GET', '/api/admin/users', [UserController::class, 'getUsers']);
-    $router->addRoute('GET', '/api/admin/users/{id:\d+}', [UserController::class, 'getUserById']);
+    $router->addRoute('GET', '/api/admin/user/{id:\d+}', [UserController::class, 'getUserById']);
     $router->addRoute('GET', '/api/admin/statuses', [StatusesController::class, 'getStatuses']);
     $router->addRoute('GET', '/api/admin/tags', [TagsController::class, 'getTags']);
     //Update ticket data
-    $router->addRoute('PUT', '/api/tickets/{id:\d+}/status', [TicketController::class, 'updateStatus']);
-    $router->addRoute('PUT', '/api/tickets/{id:\d+}/tag', [TicketController::class, 'updateTag']);
+    $router->addRoute('PUT', '/api/ticket/{id:\d+}/status', [TicketController::class, 'updateStatus']);
+    $router->addRoute('PUT', '/api/ticket/{id:\d+}/tag', [TicketController::class, 'updateTag']);
 });
 
 $routeStatus = $dispatcher->dispatch($httpMethod, $uri);
@@ -53,14 +53,14 @@ switch ($routeStatus[0]) {
             '/auth/sign-in' => null,
             '/api/user/profile' => ['user', 'admin'],
             '/api/tickets' => ['user', 'admin'],
-            '/api/tickets/{id}' => ['user', 'admin'],
-            '/user/request' => ['user'],
+            '/api/ticket/{id}' => ['user', 'admin'],
+            '/user/ticket' => ['user'],
             '/api/admin/users' => ['admin'],
-            '/api/admin/users/{id}' => ['admin'],
+            '/api/admin/user/{id}' => ['admin'],
             '/api/admin/statuses' => ['admin'],
             '/api/admin/tags' => ['admin'],
-            '/api/tickets/{id}/status' => ['admin'],
-            '/api/tickets/{id}/tag' => ['admin'],
+            '/api/ticket/{id}/status' => ['admin'],
+            '/api/ticket/{id}/tag' => ['admin'],
         ];
 
         $requiredRoles = $authRequirements[$uri];

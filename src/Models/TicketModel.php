@@ -46,8 +46,8 @@ class TicketModel extends BasicModel
             'title' => $data['title'],
             'description' => $data['description'],
             'tag_id' => $data['tag_id'],
-            'author_id' => $data['user_id'],
-            'updater_id' => $data['user_id'],
+            'author_id' => $data['author_id'],
+            'updater_id' => $data['author_id'],
         ];
 
         return parent::create($ticketData);
