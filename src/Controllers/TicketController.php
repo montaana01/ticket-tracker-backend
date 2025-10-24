@@ -3,6 +3,7 @@
 namespace TicketTracker\Controllers;
 
 use TicketTracker\Models\TicketModel;
+use TicketTracker\Helpers\Response;
 
 class TicketController
 {
@@ -13,12 +14,116 @@ class TicketController
         $this->ticketModel = new TicketModel();
     }
 
-    public function createTicket($data)
+    public function createTicket($user)
     {
-        return $this->ticketModel;
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            $ticketData = [
+                'user_id' => $user->id,
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'tag_id' => $data['tag_id'],
+            ];
+
+            $ticketId = $this->ticketModel->create($ticketData);
+            $ticket = $this->ticketModel->get($ticketId);
+
+            return Response::json([
+                'success' => true,
+                'data' => $ticket
+            ], 201);
+
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to create ticket'], 500);
+        }
     }
-    public function getAllTickets()
+
+    public function getTicket($user, $id)
     {
-        return null;
+        try {
+            $ticket = $this->ticketModel->get($id);
+
+            if (!$ticket) {
+                return Response::json(['error' => 'Ticket not found'], 404);
+            }
+
+            if ($user->role === 'user' && $ticket->author_id !== $user->id) {
+                return Response::json(['error' => 'Access denied'], 403);
+            }
+
+            return Response::json([
+                'success' => true,
+                'data' => $ticket,
+            ]);
+
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to get ticket: '.$error], 500);
+        }
+    }
+
+    public function getTickets($user)
+    {
+        try {
+            if ($user->role === 'admin') {
+                $tickets = $this->ticketModel->getAll();
+            } else {
+                $tickets = $this->ticketModel->getByUserId($user->id);
+            }
+
+            return Response::json([
+                'success' => true,
+                'data' => $tickets,
+            ]);
+
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to get tickets: '.$error], 500);
+        }
+    }
+
+    public function updateStatus($user, $id)
+    {
+        try {
+            if ($user->role !== 'admin') {
+                return Response::json(['error' => 'Admin access required'], 403);
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            $this->ticketModel->updateStatus($id, $data['statusId'], $user->id);
+
+            $ticket = $this->ticketModel->get($id);
+
+            return Response::json([
+                'success' => true,
+                'data' => $ticket
+            ]);
+
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to update status: '.$error], 500);
+        }
+    }
+
+    public function updateTag($user, $id)
+    {
+        try {
+            if ($user->role !== 'admin') {
+                return Response::json(['error' => 'Admin access required'], 403);
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            $this->ticketModel->updateTag($id, $data['tag_id'], $user->id);
+
+            $ticket = $this->ticketModel->get($id);
+
+            return Response::json([
+                'success' => true,
+                'data' => $ticket
+            ]);
+
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to update tag: '.$error], 500);
+        }
     }
 }

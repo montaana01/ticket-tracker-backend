@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use TicketTracker\Controllers\AuthController;
+use TicketTracker\Controllers\StatusesController;
+use TicketTracker\Controllers\TagsController;
 use TicketTracker\Middleware\AuthMiddleware;
 use TicketTracker\Controllers\UserController;
 use TicketTracker\Controllers\TicketController;
@@ -28,9 +30,15 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $router->addRoute('GET', '/api/tickets/{id:\d+}', [TicketController::class, 'getTicket']);
     //Create ticket
     $router->addRoute('POST', '/api/tickets', [TicketController::class, 'createTicket']);
+
     //Admins paths:
     $router->addRoute('GET', '/api/admin/users', [UserController::class, 'getUsers']);
     $router->addRoute('GET', '/api/admin/users/{id:\d+}', [UserController::class, 'getUserById']);
+    $router->addRoute('GET', '/api/admin/statuses', [StatusesController::class, 'getStatuses']);
+    $router->addRoute('GET', '/api/admin/tags', [TagsController::class, 'getTags']);
+    //Update ticket data
+    $router->addRoute('PUT', '/api/tickets/{id:\d+}/status', [TicketController::class, 'updateStatus']);
+    $router->addRoute('PUT', '/api/tickets/{id:\d+}/tag', [TicketController::class, 'updateTag']);
 });
 
 $routeStatus = $dispatcher->dispatch($httpMethod, $uri);
@@ -46,10 +54,13 @@ switch ($routeStatus[0]) {
             '/api/user/profile' => ['user', 'admin'],
             '/api/tickets' => ['user', 'admin'],
             '/api/tickets/{id}' => ['user', 'admin'],
-            '/api/tickets' => ['user', 'admin'],
             '/user/request' => ['user'],
             '/api/admin/users' => ['admin'],
             '/api/admin/users/{id}' => ['admin'],
+            '/api/admin/statuses' => ['admin'],
+            '/api/admin/tags' => ['admin'],
+            '/api/tickets/{id}/status' => ['admin'],
+            '/api/tickets/{id}/tag' => ['admin'],
         ];
 
         $requiredRoles = $authRequirements[$uri];
