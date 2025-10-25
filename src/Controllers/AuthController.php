@@ -9,9 +9,9 @@ use TicketTracker\Helpers\JwtAuth;
 
 class AuthController
 {
-    private $JwtAuth;
-    private $userModel;
-    private $userController;
+    private JwtAuth $JwtAuth;
+    private UserModel $userModel;
+    private UserController $userController;
 
     public function __construct()
     {

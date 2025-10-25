@@ -3,6 +3,7 @@ namespace TicketTracker\Config;
 
 use PDO;
 use PDOException;
+use TicketTracker\Helpers\Response;
 
 class DB
 {
@@ -24,14 +25,15 @@ class DB
         $this->createInstance();
     }
 
-    private function createInstance(): void {
+    private function createInstance() {
         try {
             $this->db = new PDO(  "mysql:host={$this->hostname};port={$this->port};dbname={$this->dbname}",
                 $this->username,
                 $this->password,
                 $this->options);
+            return $this->db;
         } catch (PDOException $error) {
-            throw new PDOException("Error while connecting to DB: " . $error->getMessage());
+             return Response::Json("Error while connecting to DB: " . $error->getMessage());
         }
     }
 }
