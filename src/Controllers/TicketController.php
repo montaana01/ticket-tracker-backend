@@ -80,6 +80,24 @@ class TicketController
         }
     }
 
+    public function removeTicket($user, $id)
+    {
+        try {
+            $deletedTicket = $this->ticketModel->get($id);
+            if (!$deletedTicket) {
+                return Response::json(['error' => 'Ticket not found'], 404);
+            } elseif ($user->role === 'user' && $deletedTicket['author_id'] !== $user->sub) {
+                return Response::json(['error' => 'Access denied'], 403);
+            } else {
+                $this->ticketModel->delete($id);
+                return Response::json([], 204);
+            }
+
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to create ticket: '.$error], 500);
+        }
+    }
+
     public function updateStatus($user, $id)
     {
         try {

@@ -28,6 +28,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     //Ticket paths
     $router->addRoute('GET', '/api/tickets', [TicketController::class, 'getTickets']);
     $router->addRoute('GET', '/api/ticket/{id:\d+}', [TicketController::class, 'getTicket']);
+    $router->addRoute('DELETE', '/api/ticket/{id:\d+}', [TicketController::class, 'removeTicket']);
     //Create ticket
     $router->addRoute('POST', '/api/tickets', [TicketController::class, 'createTicket']);
 
