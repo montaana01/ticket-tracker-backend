@@ -47,8 +47,7 @@ class TicketController
             if (!$ticket) {
                 return Response::json(['error' => 'Ticket not found'], 404);
             }
-
-            if ($user->role === 'user' && $ticket->author_id !== $user->sub) {
+            if ($user->role === 'user' && $ticket['author_id'] !== $user->sub) {
                 return Response::json(['error' => 'Access denied'], 403);
             }
 

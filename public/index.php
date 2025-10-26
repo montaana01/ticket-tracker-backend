@@ -63,7 +63,14 @@ switch ($routeStatus[0]) {
             '/api/ticket/{id}/tag' => ['admin'],
         ];
 
-        $requiredRoles = $authRequirements[$uri];
+        $requiredRoles = null;
+        foreach ($authRequirements as $pattern => $roles) {
+            $regexp = '#^' . preg_replace('#\{[^/]+}#', '[^/]+', $pattern) . '$#';
+            if (preg_match($regexp, $uri)) {
+                $requiredRoles = $roles;
+                break;
+            }
+        }
 
         if (is_null($requiredRoles)) {
             $controller = new $controllerClass();
