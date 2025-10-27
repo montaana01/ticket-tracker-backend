@@ -12,16 +12,16 @@ class JwtAuth
 
     public function __construct()
     {
-        if ($_ENV['JWT_SECRET']) {
-            $this->token = $_ENV['JWT_SECRET'];
-        } else {
-            try {
-                $params = require __DIR__ . '/../Config/params.php';
-            } catch (\Exception $error) {
-                Response::json(['error' => 'Configuration file does not exist: ' . $error], 400);
-            }
-            $this->token = $params['JWT'];
+//        if ($_ENV['JWT_SECRET']) {
+//            $this->token = $_ENV['JWT_SECRET'];
+//        } else {
+        try {
+            $params = require __DIR__ . '/../Config/params.php';
+        } catch (\Exception $error) {
+            Response::json(['error' => 'Configuration file does not exist: ' . $error], 400);
         }
+        $this->token = $params['JWT'];
+//        }
     }
 
     public function generateToken(int $userId, string $role, int $ttlHours = 24): string
