@@ -10,15 +10,21 @@ use TicketTracker\Controllers\UserController;
 use TicketTracker\Controllers\TicketController;
 use TicketTracker\Helpers\Response;
 
+$allowedOrigins = [
+    'http://localhost:8080',
+    'https://tickets.yakovlevdev.com',
+];
+
+if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
-
-header("Access-Control-Allow-Origin: https://tickets.yakovlevdev.com");
-header("Access-Control-Allow-Origin: localhost");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/');
