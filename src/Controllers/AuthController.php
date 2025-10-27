@@ -68,6 +68,8 @@ class AuthController
                 [
                     "httponly" => true,
                     "secure" => true,
+                    "samesite" => "None",
+                    "domain" => ".yakovlevdev.com",
                     "path" => "/",
                 ]
             );

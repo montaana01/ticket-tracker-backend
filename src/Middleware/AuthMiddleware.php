@@ -18,7 +18,7 @@ class AuthMiddleware
 
     public function handle(): object
     {
-        $token = $this->getTokenFromHeader();
+        $token = $this->getToken();
 
         if (!$token) {
             Response::json(['error' => 'Token required'], 401);
@@ -41,11 +41,14 @@ class AuthMiddleware
     }
 
 
-    private function getTokenFromHeader(): ?string
+    private function getToken(): ?string
     {
+        if (!empty($_COOKIE['auth_token'])) {
+            return $_COOKIE['auth_token'];
+        }
+
         $headers = getallheaders();
         $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-
         if (str_starts_with($authHeader, 'Bearer ')) {
             return substr($authHeader, 7);
         }
