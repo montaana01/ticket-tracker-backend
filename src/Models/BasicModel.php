@@ -35,7 +35,7 @@ class BasicModel
         $stmt = $this->connection->prepare("SELECT * FROM {$this->tableName} WHERE id = ?");
         $stmt->execute([$id]);
 
-        return $stmt->fetch() ?: null;
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
     public function getAll(): array
@@ -43,7 +43,7 @@ class BasicModel
         $sql = "SELECT * FROM {$this->tableName}";
         $stmt = $this->connection->query($sql);
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function create(array $data): int

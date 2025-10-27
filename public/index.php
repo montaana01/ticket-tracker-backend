@@ -12,6 +12,7 @@ use TicketTracker\Helpers\Response;
 
 $allowedOrigins = [
     'http://localhost:8080',
+    'http://localhost:8888',
     'https://tickets.yakovlevdev.com',
 ];
 

@@ -13,6 +13,6 @@ class UserModel extends BasicModel
         $stmt = $this->connection->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
 
-        return $stmt->fetch() ?: null;
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 }

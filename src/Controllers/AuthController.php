@@ -66,6 +66,7 @@ class AuthController
                 "auth_token",
                 $token,
                 [
+                    'expires' => time() + 3600 * 24 * 30,
                     "httponly" => true,
                     "secure" => true,
                     "samesite" => "None",
