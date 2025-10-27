@@ -12,8 +12,22 @@ class BasicModel
     public function __construct($tableName)
     {
         $this->tableName = $tableName;
-        $config = require __DIR__ . '/../Config/params.php';
+        if ($_ENV) {
+            $config = [
+                'db' => [
+                    'host' => $_ENV['DB_HOST'],
+                    'port' => $_ENV['DB_PORT'],
+                    'dbname' => $_ENV['DB_NAME'],
+                    'username' => $_ENV['DB_USER'],
+                    'password' => $_ENV['DB_PASS'],
+                    'options' => $_ENV['DB_OPTIONS']
+                ],
+            ];
+        } else {
+            $config = require __DIR__ . '/../Config/params.php';
+        }
         $this->connection = (new DB($config['db']))->db;
+
     }
 
     public function get(int $id): ?array
