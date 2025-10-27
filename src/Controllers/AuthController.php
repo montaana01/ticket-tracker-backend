@@ -62,7 +62,16 @@ class AuthController
             }
 
             $token = $this->JwtAuth->generateToken($user['id'], $user['role']);
-            Response::json(['token' => $token, 'role' => $user['role']]);
+            setcookie(
+                "auth_token",
+                $token,
+                [
+                    "httponly" => true,
+                    "secure" => true,
+                    "path" => "/",
+                ]
+            );
+            Response::json(['role' => $user['role']]);
         } catch (JsonException $exception) {
             Response::json([
                 'error' => 'Invalid JSON format',
