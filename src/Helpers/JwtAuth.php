@@ -13,11 +13,11 @@ class JwtAuth
     public function __construct()
     {
         try {
-            $key = require_once __DIR__ . '/../Config/params.php';
+            $params = require_once __DIR__ . '/../Config/params.php';
         } catch (\Exception $error) {
             Response::json(['error'=>'Configuration file does not exist: '.$error], 400);
         }
-        $this->token = $key['JWT'];
+        $this->token = $params['JWT'];
     }
 
     public function generateToken(int $userId, string $role, int $ttlHours = 24): string {
@@ -32,8 +32,12 @@ class JwtAuth
         return JWT::encode($payload, $this->token , 'HS256');
     }
 
-    public function validateToken(string $token): \stdClass
+    public function validateToken(string $token): \stdClass|array
     {
-        return JWT::decode($token, new Key($this->token, 'HS256'));
+        try {
+            return JWT::decode($token, new Key($this->token, 'HS256'));
+        } catch (\Exception $error) {
+            return Response::json(['error'=>$error->getMessage()], 400);
+        }
     }
 }
