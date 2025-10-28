@@ -83,4 +83,22 @@ class AuthController
             return;
         }
     }
+
+    public function signOut(): void
+    {
+        setcookie(
+            "auth_token",
+            "",
+            [
+                'expires' => time() - 3600,
+                "httponly" => true,
+                "secure" => true,
+                "samesite" => "None",
+                "domain" => ".yakovlevdev.com",
+                "path" => "/",
+            ]
+        );
+
+        Response::json(['message' => 'Successfully signed out']);
+    }
 }

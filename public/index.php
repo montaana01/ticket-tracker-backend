@@ -36,6 +36,7 @@ $httpMethod = $_SERVER['REQUEST_METHOD'];
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $router) {
     $router->addRoute('POST', '/auth/sign-up', [AuthController::class, 'signUp']);
     $router->addRoute('POST', '/auth/sign-in', [AuthController::class, 'signIn']);
+    $router->addRoute('POST', '/auth/sign-out', [AuthController::class, 'signOut']);
     //Get user info
     $router->addRoute('GET', '/api/user/profile', [UserController::class, 'getProfile']);
     //Ticket paths
@@ -65,6 +66,7 @@ switch ($routeStatus[0]) {
         $authRequirements = [
             '/auth/sign-up' => null,
             '/auth/sign-in' => null,
+            '/auth/sign-out' => ['user', 'admin'],
             '/api/user/profile' => ['user', 'admin'],
             '/api/tickets' => ['user', 'admin'],
             '/api/ticket/{id}' => ['user', 'admin'],
