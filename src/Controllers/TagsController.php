@@ -3,6 +3,7 @@
 namespace TicketTracker\Controllers;
 
 use TicketTracker\Models\TagsModel;
+use TicketTracker\Helpers\Response;
 
 class TagsController
 {
@@ -16,12 +17,12 @@ class TagsController
     public function getTags()
     {
         try {
-            $statuses = $this->tagsModel->getAll();
+            $tags = $this->tagsModel->getAll();
 
             return Response::json([
-                'success' => true,
-                'data' => $statuses
-            ], 201);
+                'data' => $tags,
+                'message' => 'Tags retrieved successfully'
+            ]);
 
         } catch (\Exception $error) {
             return Response::json(['error' => 'Failed to get tags'], 500);

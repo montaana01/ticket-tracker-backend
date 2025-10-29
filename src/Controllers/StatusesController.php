@@ -3,6 +3,7 @@
 namespace TicketTracker\Controllers;
 
 use TicketTracker\Models\StatusesModel;
+use TicketTracker\Helpers\Response;
 
 class StatusesController
 {
@@ -19,9 +20,9 @@ class StatusesController
             $statuses = $this->statusesModel->getAll();
 
             return Response::json([
-                'success' => true,
-                'data' => $statuses
-            ], 201);
+                'data' => $statuses,
+                'message' => 'Statuses retrieved successfully'
+            ]);
 
         } catch (\Exception $error) {
             return Response::json(['error' => 'Failed to get statuses'], 500);

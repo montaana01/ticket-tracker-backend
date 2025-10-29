@@ -100,15 +100,20 @@ switch ($routeStatus[0]) {
         break;
 
     case FastRoute\Dispatcher::NOT_FOUND:
-        Response::json(['error' => 'Route not found', 'uri' => $uri], 404);
+        Response::json([
+            'error' => 'Route not found',
+            'message' => 'No matching route for URI: ' . $uri
+        ], 404);
         break;
 
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeStatus[1];
         Response::json([
             'error' => 'Method not allowed',
-            'requested_method' => $httpMethod,
-            'allowed_methods' => $allowedMethods,
+            'message' =>[
+                'requested_method' => $httpMethod,
+                'allowed_methods' => $allowedMethods,
+            ],
             'uri' => $uri
         ], 405);
         break;

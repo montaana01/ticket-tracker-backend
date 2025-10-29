@@ -30,8 +30,8 @@ class TicketController
             $ticket = $this->ticketModel->get($ticketId);
 
             return Response::json([
-                'success' => true,
-                'data' => $ticket
+                'data' => $ticket,
+                'message' => 'Ticket created successfully'
             ], 201);
 
         } catch (\Exception $error) {
@@ -52,7 +52,6 @@ class TicketController
             }
 
             return Response::json([
-                'success' => true,
                 'data' => $ticket,
             ]);
 
@@ -71,7 +70,6 @@ class TicketController
             }
 
             return Response::json([
-                'success' => true,
                 'data' => $tickets,
             ]);
 
@@ -90,7 +88,9 @@ class TicketController
                 return Response::json(['error' => 'Access denied'], 403);
             } else {
                 $this->ticketModel->delete($id);
-                return Response::json([], 204);
+                return Response::json([
+                    'message' => 'Ticket deleted successfully'
+                ], 204);
             }
 
         } catch (\Exception $error) {
@@ -112,8 +112,8 @@ class TicketController
             $ticket = $this->ticketModel->get($id);
 
             return Response::json([
-                'success' => true,
-                'data' => $ticket
+                'data' => $ticket,
+                'message' => 'Status updated successfully'
             ]);
 
         } catch (\Exception $error) {
@@ -135,8 +135,8 @@ class TicketController
             $ticket = $this->ticketModel->get($id);
 
             return Response::json([
-                'success' => true,
-                'data' => $ticket
+                'data' => $ticket,
+                'message' => 'Tag updated successfully'
             ]);
 
         } catch (\Exception $error) {

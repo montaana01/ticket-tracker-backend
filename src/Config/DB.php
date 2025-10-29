@@ -33,7 +33,8 @@ class DB
                 $this->options);
             return $this->db;
         } catch (PDOException $error) {
-             return Response::Json("Error while connecting to DB: " . $error->getMessage());
+            Response::json(['error' => 'Error while connecting to DB: ' . $error->getMessage()], 500);
+            exit;
         }
     }
 }

@@ -40,13 +40,13 @@ class AuthController
             }
 
             Response::json([
-                'id' => $response['user_id'],
+                'data' => ['id' => $response['user_id']],
                 'message' => $response['message']
             ]);
         } catch (JsonException $exception) {
             Response::json([
                 'error' => 'Invalid JSON format',
-                'details' => 'JSON parsing error: ' . $exception->getMessage()
+                'message' => 'JSON parsing error: ' . $exception->getMessage()
             ], 400);
             return;
         }
@@ -74,11 +74,11 @@ class AuthController
                     "path" => "/",
                 ]
             );
-            Response::json(['role' => $user['role']]);
+            Response::json(['data' => ['role' => $user['role']]]);
         } catch (JsonException $exception) {
             Response::json([
                 'error' => 'Invalid JSON format',
-                'details' => 'JSON parsing error: ' . $exception->getMessage()
+                'message' => 'JSON parsing error: ' . $exception->getMessage()
             ], 400);
             return;
         }

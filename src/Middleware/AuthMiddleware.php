@@ -25,7 +25,12 @@ class AuthMiddleware
             exit;
         }
 
-        $user = $this->jwtAuth->validateToken($token);
+        try {
+            $user = $this->jwtAuth->validateToken($token);
+        } catch (\Exception $e) {
+            Response::json(['error' => $e->getMessage()], 401);
+            exit;
+        }
 
         if (!$user) {
             Response::json(['error' => 'Invalid or expired token'], 401);

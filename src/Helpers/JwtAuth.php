@@ -12,16 +12,12 @@ class JwtAuth
 
     public function __construct()
     {
-//        if ($_ENV['JWT_SECRET']) {
-//            $this->token = $_ENV['JWT_SECRET'];
-//        } else {
         try {
             $params = require __DIR__ . '/../Config/params.php';
         } catch (\Exception $error) {
-            Response::json(['error' => 'Configuration file does not exist: ' . $error], 400);
+            throw new \Exception('Invalid token: ' . $error->getMessage());
         }
         $this->token = $params['JWT'];
-//        }
     }
 
     public function generateToken(int $userId, string $role, int $ttlHours = 24): string
@@ -42,7 +38,8 @@ class JwtAuth
         try {
             return JWT::decode($token, new Key($this->token, 'HS256'));
         } catch (\Exception $error) {
-            return Response::json(['error' => $error->getMessage()], 400);
+            throw new \Exception('Invalid token: ' . $error->getMessage());
         }
     }
+
 }
