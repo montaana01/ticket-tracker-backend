@@ -45,12 +45,19 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $router->addRoute('DELETE', '/api/ticket/{id:\d+}', [TicketController::class, 'removeTicket']);
     //Create ticket
     $router->addRoute('POST', '/api/tickets', [TicketController::class, 'createTicket']);
+    //Get tags
+    $router->addRoute('GET', '/api/tags', [TagsController::class, 'getTags']);
+    //Get statuses
+    $router->addRoute('GET', '/api/statuses', [StatusesController::class, 'getStatuses']);
 
     //Admins paths:
     $router->addRoute('GET', '/api/admin/users', [UserController::class, 'getUsers']);
     $router->addRoute('GET', '/api/admin/user/{id:\d+}', [UserController::class, 'getUserById']);
-    $router->addRoute('GET', '/api/admin/statuses', [StatusesController::class, 'getStatuses']);
-    $router->addRoute('GET', '/api/admin/tags', [TagsController::class, 'getTags']);
+    //CRUD tags && statuses
+    $router->addRoute('POST', '/api/admin/tags', [TagsController::class, 'createTag']);
+    $router->addRoute('PUT', '/api/admin/tags/{id:\d+}', [TagsController::class, 'updateTag']);
+    $router->addRoute('POST', '/api/admin/statuses', [StatusesController::class, 'createStatus']);
+    $router->addRoute('PUT', '/api/admin/statuses/{id:\d+}', [StatusesController::class, 'updateStatus']);
     //Update ticket data
     $router->addRoute('PUT', '/api/ticket/{id:\d+}/status', [TicketController::class, 'updateStatus']);
     $router->addRoute('PUT', '/api/ticket/{id:\d+}/tag', [TicketController::class, 'updateTag']);
@@ -71,10 +78,14 @@ switch ($routeStatus[0]) {
             '/api/tickets' => ['user', 'admin'],
             '/api/ticket/{id}' => ['user', 'admin'],
             '/user/ticket' => ['user'],
+            '/api/tags' => ['user', 'admin'],
+            '/api/statuses' => ['user', 'admin'],
             '/api/admin/users' => ['admin'],
             '/api/admin/user/{id}' => ['admin'],
-            '/api/admin/statuses' => ['admin'],
             '/api/admin/tags' => ['admin'],
+            '/api/admin/tags/{id}' => ['admin'],
+            '/api/admin/statuses' => ['admin'],
+            '/api/admin/statuses/{id}' => ['admin'],
             '/api/ticket/{id}/status' => ['admin'],
             '/api/ticket/{id}/tag' => ['admin'],
         ];
