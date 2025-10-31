@@ -61,6 +61,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     //Update ticket data
     $router->addRoute('PUT', '/api/ticket/{id:\d+}/status', [TicketController::class, 'updateStatus']);
     $router->addRoute('PUT', '/api/ticket/{id:\d+}/tag', [TicketController::class, 'updateTag']);
+    //Add message
+    $router->addRoute('POST', '/api/ticket/{id:\d+}/message', [TicketController::class, 'addMessage']);
 });
 
 $routeStatus = $dispatcher->dispatch($httpMethod, $uri);
@@ -88,6 +90,7 @@ switch ($routeStatus[0]) {
             '/api/admin/statuses/{id}' => ['admin'],
             '/api/ticket/{id}/status' => ['admin'],
             '/api/ticket/{id}/tag' => ['admin'],
+            '/api/ticket/{id}/message' => ['admin'],
         ];
 
         $requiredRoles = null;

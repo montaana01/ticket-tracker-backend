@@ -2,6 +2,7 @@
 
 namespace TicketTracker\Controllers;
 
+use TicketTracker\Models\MessagesModel;
 use TicketTracker\Models\TicketModel;
 use TicketTracker\Helpers\Response;
 
@@ -141,6 +142,34 @@ class TicketController
 
         } catch (\Exception $error) {
             return Response::json(['error' => 'Failed to update tag: '.$error], 500);
+        }
+    }
+
+    public function addMessage($user, $id)
+    {
+        try {
+            if ($user->role !== 'admin') {
+                return Response::json(['error' => 'Admin access required'], 403);
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            $messageData = [
+                'ticket_id' => $id,
+                'user_id' => $user->id,
+                'message' => $data['message'],
+            ];
+
+            $messageModel = new MessagesModel();
+            $message = $messageModel->create($messageData);
+
+            return Response::json([
+                'success' => true,
+                'data' => $message
+            ], 201);
+
+        } catch (\Exception $error) {
+            Response::json(['error' => 'Failed to add message'], 500);
         }
     }
 }
