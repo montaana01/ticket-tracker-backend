@@ -27,6 +27,7 @@ class UserController
             $userId = $this->userModel->create($userData);
 
             return [
+                 'success' => true,
                 'user_id' => $userId,
                 'message' => 'User created successfully'
             ];
