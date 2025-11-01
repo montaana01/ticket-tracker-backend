@@ -25,7 +25,7 @@ class JwtAuth
         $issuedAt = time();
         $payload = [
             'iss' => 'TicketTracker',
-            'sub' => $userId,
+            'user' => $userId,
             'role' => $role,
             'iat' => $issuedAt,
             'exp' => $issuedAt + ($ttlHours * 3600)

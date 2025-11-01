@@ -11,7 +11,8 @@ use TicketTracker\Controllers\TicketController;
 use TicketTracker\Helpers\Response;
 
 $allowedOrigins = [
-    'http://localhost:8080',
+    'http://localhost:3000',
+    'http://localhost:8081',
     'http://localhost:8888',
     'https://tickets.yakovlevdev.com',
 ];
@@ -37,6 +38,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $router->addRoute('POST', '/auth/sign-up', [AuthController::class, 'signUp']);
     $router->addRoute('POST', '/auth/sign-in', [AuthController::class, 'signIn']);
     $router->addRoute('POST', '/auth/sign-out', [AuthController::class, 'signOut']);
+    $router->addRoute('GET', '/auth/check', [AuthController::class, 'checkAuth']);
     //Get user info
     $router->addRoute('GET', '/api/user/profile', [UserController::class, 'getProfile']);
     //Ticket paths
@@ -75,6 +77,7 @@ switch ($routeStatus[0]) {
         $authRequirements = [
             '/auth/sign-up' => null,
             '/auth/sign-in' => null,
+            '/auth/check' => null,
             '/auth/sign-out' => ['user', 'admin'],
             '/api/user/profile' => ['user', 'admin'],
             '/api/tickets' => ['user', 'admin'],

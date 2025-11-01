@@ -21,7 +21,7 @@ class TicketController
             $data = json_decode(file_get_contents('php://input'), true);
 
             $ticketData = [
-                'author_id' => $user->sub,
+                'author_id' => $user->user,
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'tag_id' => $data['tag_id'],
@@ -48,7 +48,7 @@ class TicketController
             if (!$ticket) {
                 return Response::json(['error' => 'Ticket not found'], 404);
             }
-            if ($user->role === 'user' && $ticket['author_id'] !== $user->sub) {
+            if ($user->role === 'user' && $ticket['author_id'] !== $user->user) {
                 return Response::json(['error' => 'Access denied'], 403);
             }
 
@@ -67,7 +67,7 @@ class TicketController
             if ($user->role === 'admin') {
                 $tickets = $this->ticketModel->getAll();
             } else {
-                $tickets = $this->ticketModel->getByUserId($user->sub);
+                $tickets = $this->ticketModel->getByUserId($user->user);
             }
 
             return Response::json([
@@ -85,7 +85,7 @@ class TicketController
             $deletedTicket = $this->ticketModel->get($id);
             if (!$deletedTicket) {
                 return Response::json(['error' => 'Ticket not found'], 404);
-            } elseif ($user->role === 'user' && $deletedTicket['author_id'] !== $user->sub) {
+            } elseif ($user->role === 'user' && $deletedTicket['author_id'] !== $user->user) {
                 return Response::json(['error' => 'Access denied'], 403);
             } else {
                 $this->ticketModel->delete($id);
@@ -108,7 +108,7 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            $this->ticketModel->updateStatus($id, $data['statusId'], $user->sub);
+            $this->ticketModel->updateStatus($id, $data['statusId'], $user->user);
 
             $ticket = $this->ticketModel->get($id);
 
@@ -131,7 +131,7 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            $this->ticketModel->updateTag($id, $data['tag_id'], $user->sub);
+            $this->ticketModel->updateTag($id, $data['tag_id'], $user->user);
 
             $ticket = $this->ticketModel->get($id);
 
@@ -156,7 +156,7 @@ class TicketController
 
             $messageData = [
                 'ticket_id' => $id,
-                'user_id' => $user->id,
+                'user_id' => $user->user,
                 'message' => $data['message'],
             ];
 

@@ -2,6 +2,7 @@
 
 namespace TicketTracker\Controllers;
 
+use Exception;
 use JsonException;
 use TicketTracker\Helpers\Response;
 use TicketTracker\Models\UserModel;
@@ -57,8 +58,13 @@ class AuthController
         try {
             $data = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
             $user = $this->userModel->getByUsername($data['username'] ?? '');
-            if (!$user || !password_verify($data['password'] ?? '', $user['password_hash'])) {
-                Response::json(['error' => 'Invalid credentials'], 401);
+
+            if (!$user) {
+                Response::json(['error' => 'User does not exist'], 401);
+            }
+
+            if (!password_verify($data['password'] ?? '', $user['password_hash'])) {
+                Response::json(['error' => 'Password or Username not correct'], 401);
             }
 
             $token = $this->JwtAuth->generateToken($user['id'], $user['role']);
@@ -100,5 +106,31 @@ class AuthController
         );
 
         Response::json(['message' => 'Successfully signed out']);
+    }
+
+    public function checkAuth(): void
+    {
+        $token = $_COOKIE['auth_token'] ?? '';
+
+        if (!$token) {
+            Response::json(['data' => ['authenticated' => false]]);
+            return;
+        }
+
+        try {
+            $payload = $this->JwtAuth->validateToken($token);
+            $user = $this->userModel->get($payload->user);
+            if (!$user) {
+                Response::json(['data' => ['authenticated' => false]]);
+                return;
+            }
+
+            Response::json(['data' => [
+                'authenticated' => true,
+                'role' => $user['role']
+            ]]);
+        } catch (Exception $error) {
+            Response::json(['data' => ['authenticated' => false], 'message' => $error->getMessage()]);
+        }
     }
 }

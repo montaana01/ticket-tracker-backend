@@ -27,7 +27,7 @@ class UserController
             $userId = $this->userModel->create($userData);
 
             return [
-                 'success' => true,
+                'success' => true,
                 'user_id' => $userId,
                 'message' => 'User created successfully'
             ];
@@ -40,7 +40,7 @@ class UserController
     public function getProfile(object $user): void
     {
         try {
-            $userId = $user->sub;
+            $userId = $user->user;
             $userData = $this->userModel->get($userId);
 
             if (!$userData) {
