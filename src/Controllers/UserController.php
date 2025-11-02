@@ -72,9 +72,12 @@ class UserController
         }
     }
 
-    public function getUserById(int $id): void
+    public function getUserById($user, $id)
     {
         try {
+            if ($user->role === 'user') {
+                return Response::json(['error' => 'Access denied'], 403);
+            }
             $userData = $this->userModel->get($id);
             if (!$userData) {
                 Response::json(['error' => 'User not found'], 404);
