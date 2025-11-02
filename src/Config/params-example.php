@@ -11,5 +11,6 @@ return [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
         ]
     ],
-    'JWT' => 'example key'
+    'JWT' => 'example key',
+    'FE_DOMAIN' => 'localhost',
 ];
