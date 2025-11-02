@@ -9,10 +9,12 @@ use TicketTracker\Helpers\Response;
 class TicketController
 {
     private TicketModel $ticketModel;
+    private MessagesModel $messageModel;
 
     public function __construct()
     {
         $this->ticketModel = new TicketModel();
+        $this->messageModel = new MessagesModel();
     }
 
     public function createTicket($user)
@@ -95,7 +97,7 @@ class TicketController
             }
 
         } catch (\Exception $error) {
-            return Response::json(['error' => 'Failed to create ticket: '.$error], 500);
+            return Response::json(['error' => 'Failed to remove ticket: '.$error], 500);
         }
     }
 
@@ -108,7 +110,11 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            $this->ticketModel->updateStatus($id, $data['statusId'], $user->user);
+            if (!$data['status_id']) {
+                return Response::json(['error' => 'Required status_id property'], 422);
+            }
+
+            $this->ticketModel->updateStatus($id, $data['status_id'], $user->user);
 
             $ticket = $this->ticketModel->get($id);
 
@@ -131,6 +137,10 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
+            if (!$data['tag_id']) {
+                return Response::json(['error' => 'Required tag_id property'], 422);
+            }
+
             $this->ticketModel->updateTag($id, $data['tag_id'], $user->user);
 
             $ticket = $this->ticketModel->get($id);
@@ -152,16 +162,25 @@ class TicketController
                 return Response::json(['error' => 'Admin access required'], 403);
             }
 
+            $ticket = $this->ticketModel->get($id);
+
+            if (!$ticket) {
+                return Response::json(['error' => 'Ticket not found'], 404);
+            }
+
             $data = json_decode(file_get_contents('php://input'), true);
 
+            if (!$data['message']) {
+                return Response::json(['error' => 'Required message property'], 422);
+            }
+
             $messageData = [
-                'ticket_id' => $id,
-                'user_id' => $user->user,
                 'message' => $data['message'],
+                'author_id' => $user->user,
+                'ticket_id' => $id,
             ];
 
-            $messageModel = new MessagesModel();
-            $message = $messageModel->create($messageData);
+            $message = $this->messageModel->create($messageData);
 
             return Response::json([
                 'success' => true,
@@ -169,7 +188,7 @@ class TicketController
             ], 201);
 
         } catch (\Exception $error) {
-            Response::json(['error' => 'Failed to add message'], 500);
+            Response::json(['error' => 'Failed to add message: '. $error], 500);
         }
     }
 }

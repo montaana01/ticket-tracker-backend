@@ -57,8 +57,9 @@ class BasicModel
 
         $sql = "UPDATE {$this->tableName} SET " . implode(', ', $setPlaceHolders) . " WHERE id = ?";
         $stmt = $this->connection->prepare($sql);
+        $success = $stmt->execute($params);
 
-        return $stmt->execute($params);
+        return $success && $stmt->rowCount() > 0;
     }
 
     public function delete(int $id): bool

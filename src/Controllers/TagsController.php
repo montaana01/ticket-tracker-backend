@@ -45,20 +45,63 @@ class TagsController
         }
     }
 
-    public function updateTag($id)
+    public function updateTag($user, $id)
     {
-        $body = json_decode(file_get_contents('php://input'), true) ?: [];
-        if (empty($body['name'])) {
-            return Response::json(['error' => 'Name required'], 400);
-        }
-
         try {
-            $ok = $this->tagsModel->update((int)$id, ['name' => $body['name']]);
-            if (!$ok) return Response::json(['error' => 'Update failed'], 500);
+            $updatedTag = $this->tagsModel->get($id);
+            if (!$updatedTag) {
+                return Response::json(['error' => 'Tag not found'], 404);
+            }
+
+            if ($user->role === 'user') {
+                return Response::json(['error' => 'Access denied'], 403);
+            }
+            $body = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            if (empty($body['name'])) {
+                return Response::json(['error' => 'Name required'], 400);
+            }
+
+            if ($updatedTag === $body['name']) {
+                return Response::json(['error' => 'Status name already exists'], 409);
+            }
+
+            $preparedData = ['name' => $body['name']];
+            $update  = $this->tagsModel->update((int)$id, $preparedData);
+
+            if (!$update) {
+                return Response::json(['error' => 'Update failed'], 500);
+            }
+
             $tag = $this->tagsModel->get((int)$id);
             return Response::json(['data' => $tag]);
-        } catch (\Exception $e) {
-            return Response::json(['error' => 'Failed to update tag'], 500);
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to update tag: '.$error], 500);
+        }
+    }
+
+    public function removeTag($user, $id)
+    {
+        try {
+            $deletedTag = $this->tagsModel->get($id);
+            if (!$deletedTag) {
+                return Response::json(['error' => 'Tag not found'], 404);
+            }
+
+            if ($user->role === 'user') {
+                return Response::json(['error' => 'Access denied'], 403);
+            }
+
+            $this->tagsModel->delete($id);
+            return Response::json([
+                'message' => 'Tag deleted successfully'
+            ], 204);
+
+        } catch (\Exception $error) {
+            if ($error->getCode() === '23000') {
+                return Response::json(['error' => 'Cannot delete: tag is in use'], 409);
+            }
+            return Response::json(['error' => 'Failed to remove tag: '.$error], 500);
         }
     }
 }
