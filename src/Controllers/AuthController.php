@@ -13,9 +13,16 @@ class AuthController
     private JwtAuth $JwtAuth;
     private UserModel $userModel;
     private UserController $userController;
+    private array $config;
 
     public function __construct()
     {
+        try {
+            $params = require __DIR__ . '/../Config/params.php';
+            $this->config = $params;
+        } catch (\Exception $error) {
+            throw new \Exception('Invalid config file: ' . $error->getMessage());
+        }
         $this->JwtAuth = new JwtAuth();
         $this->userModel = new UserModel();
         $this->userController = new UserController();
@@ -76,7 +83,7 @@ class AuthController
                     "httponly" => true,
                     "secure" => true,
                     "samesite" => "None",
-                    "domain" => ".yakovlevdev.com",
+                    "domain" => ".{${$this->config['FE_DOMAIN'] ?? 'localhost'}}",
                     "path" => "/",
                 ]
             );
@@ -100,7 +107,7 @@ class AuthController
                 "httponly" => true,
                 "secure" => true,
                 "samesite" => "None",
-                "domain" => ".yakovlevdev.com",
+                "domain" => ".{${$this->config['FE_DOMAIN'] ?? 'localhost'}}",
                 "path" => "/",
             ]
         );
