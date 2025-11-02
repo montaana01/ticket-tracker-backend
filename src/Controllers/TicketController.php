@@ -95,7 +95,7 @@ class TicketController
             }
 
         } catch (\Exception $error) {
-            return Response::json(['error' => 'Failed to create ticket: '.$error], 500);
+            return Response::json(['error' => 'Failed to remove ticket: '.$error], 500);
         }
     }
 
@@ -108,7 +108,11 @@ class TicketController
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            $this->ticketModel->updateStatus($id, $data['statusId'], $user->user);
+            if (!$data['status_id']) {
+                return Response::json(['error' => 'Required status_id property'], 422);
+            }
+
+            $this->ticketModel->updateStatus($id, $data['status_id'], $user->user);
 
             $ticket = $this->ticketModel->get($id);
 
@@ -130,6 +134,10 @@ class TicketController
             }
 
             $data = json_decode(file_get_contents('php://input'), true);
+
+            if (!$data['tag_id']) {
+                return Response::json(['error' => 'Required tag_id property'], 422);
+            }
 
             $this->ticketModel->updateTag($id, $data['tag_id'], $user->user);
 
@@ -153,6 +161,10 @@ class TicketController
             }
 
             $data = json_decode(file_get_contents('php://input'), true);
+
+            if (!$data['message']) {
+                return Response::json(['error' => 'Required tag_id property'], 422);
+            }
 
             $messageData = [
                 'ticket_id' => $id,

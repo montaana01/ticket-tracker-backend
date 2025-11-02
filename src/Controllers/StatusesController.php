@@ -46,20 +46,63 @@ class StatusesController
         }
     }
 
-    public function updateStatus($id)
+    public function updateStatus($user, $id)
     {
-        $body = json_decode(file_get_contents('php://input'), true) ?: [];
-        if (empty($body['name'])) {
-            return Response::json(['error' => 'Name required'], 400);
-        }
-
         try {
-            $ok = $this->statusesModel->update((int)$id, ['name' => $body['name']]);
-            if (!$ok) return Response::json(['error' => 'Update failed'], 500);
-            $tag = $this->statusesModel->get((int)$id);
-            return Response::json(['data' => $tag]);
-        } catch (\Exception $e) {
-            return Response::json(['error' => 'Failed to update status'], 500);
+            $updatedStatus = $this->statusesModel->get($id);
+            if (!$updatedStatus) {
+                return Response::json(['error' => 'Status not found'], 404);
+            }
+
+            if ($user->role === 'user') {
+                return Response::json(['error' => 'Access denied'], 403);
+            }
+            $body = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            if (empty($body['name'])) {
+                return Response::json(['error' => 'Name required'], 400);
+            }
+
+            if ($updatedStatus === $body['name']) {
+                return Response::json(['error' => 'Status name already exists'], 409);
+            }
+
+            $preparedData = ['name' => $body['name']];
+            $update = $this->statusesModel->update((int)$id, $preparedData);
+
+            if (!$update) {
+                return Response::json(['error' => 'Update failed'], 400);
+            }
+
+            $status = $this->statusesModel->get($id);
+            return Response::json(['data' => $status]);
+        } catch (\Exception $error) {
+            return Response::json(['error' => 'Failed to update status: '.$error], 500);
+        }
+    }
+
+    public function removeStatus($user, $id)
+    {
+        try {
+            $deletedStatus = $this->statusesModel->get($id);
+            if (!$deletedStatus) {
+                return Response::json(['error' => 'Status not found'], 404);
+            }
+
+            if ($user->role === 'user') {
+                return Response::json(['error' => 'Access denied'], 403);
+            }
+
+            $this->statusesModel->delete($id);
+            return Response::json([
+                'message' => 'Status deleted successfully'
+            ], 204);
+
+        } catch (\Exception $error) {
+            if ($error->getCode() === '23000') {
+                return Response::json(['error' => 'Cannot delete: status is in use'], 409);
+            }
+            return Response::json(['error' => 'Failed to remove status: '.$error], 500);
         }
     }
 }

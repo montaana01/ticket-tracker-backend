@@ -59,13 +59,15 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     //CRUD tags && statuses
     $router->addRoute('POST', '/api/admin/tags', [TagsController::class, 'createTag']);
     $router->addRoute('PUT', '/api/admin/tags/{id:\d+}', [TagsController::class, 'updateTag']);
+    $router->addRoute('DELETE', '/api/admin/tags/{id:\d+}', [TagsController::class, 'removeTag']);
     $router->addRoute('POST', '/api/admin/statuses', [StatusesController::class, 'createStatus']);
     $router->addRoute('PUT', '/api/admin/statuses/{id:\d+}', [StatusesController::class, 'updateStatus']);
+    $router->addRoute('DELETE', '/api/admin/statuses/{id:\d+}', [StatusesController::class, 'removeStatus']);
     //Update ticket data
-    $router->addRoute('PUT', '/api/ticket/{id:\d+}/status', [TicketController::class, 'updateStatus']);
-    $router->addRoute('PUT', '/api/ticket/{id:\d+}/tag', [TicketController::class, 'updateTag']);
+    $router->addRoute('PUT', '/api/admin/ticket/{id:\d+}/status', [TicketController::class, 'updateStatus']);
+    $router->addRoute('PUT', '/api/admin/ticket/{id:\d+}/tag', [TicketController::class, 'updateTag']);
     //Add message
-    $router->addRoute('POST', '/api/ticket/{id:\d+}/message', [TicketController::class, 'addMessage']);
+    $router->addRoute('POST', '/api/admin/ticket/{id:\d+}/message', [TicketController::class, 'addMessage']);
 });
 
 $routeStatus = $dispatcher->dispatch($httpMethod, $uri);
@@ -92,9 +94,9 @@ switch ($routeStatus[0]) {
             '/api/admin/tags/{id}' => ['admin'],
             '/api/admin/statuses' => ['admin'],
             '/api/admin/statuses/{id}' => ['admin'],
-            '/api/ticket/{id}/status' => ['admin'],
-            '/api/ticket/{id}/tag' => ['admin'],
-            '/api/ticket/{id}/message' => ['admin'],
+            '/api/admin/ticket/{id}/status' => ['admin'],
+            '/api/admin/ticket/{id}/tag' => ['admin'],
+            '/api/admin/ticket/{id}/message' => ['admin'],
         ];
 
         $requiredRoles = null;
