@@ -155,6 +155,31 @@ class TicketController
         }
     }
 
+    public function getMessage($user, $id)
+    {
+        try {
+            $ticket = $this->ticketModel->get($id);
+
+            if (!$ticket) {
+                return Response::json(['error' => 'Ticket not found'], 404);
+            }
+
+            if ($user->role === 'user' && $user->user !== $ticket['author_id']) {
+                return Response::json(['error' => 'User access required'], 403);
+            }
+
+            $message = $this->messageModel->get($ticket['message_id']);
+
+            return Response::json([
+                'success' => true,
+                'data' => $message
+            ], 201);
+
+        } catch (\Exception $error) {
+            Response::json(['error' => 'Failed to get message: '. $error], 500);
+        }
+    }
+
     public function addMessage($user, $id)
     {
         try {
@@ -182,13 +207,15 @@ class TicketController
 
             $message = $this->messageModel->create($messageData);
 
+            $this->ticketModel->updateMessage($ticket['id'], $message, $user->user);
+
             return Response::json([
                 'success' => true,
                 'data' => $message
-            ], 201);
+            ], 200);
 
         } catch (\Exception $error) {
-            Response::json(['error' => 'Failed to add message: '. $error], 500);
+            return Response::json(['error' => 'Failed to get message: '. $error], 500);
         }
     }
 }

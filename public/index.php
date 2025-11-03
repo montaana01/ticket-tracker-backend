@@ -52,6 +52,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $rout
     $router->addRoute('GET', '/api/tags', [TagsController::class, 'getTags']);
     //Get statuses
     $router->addRoute('GET', '/api/statuses', [StatusesController::class, 'getStatuses']);
+    //Get message
+    $router->addRoute('GET', '/api/ticket/{id:\d+}/message', [TicketController::class, 'getMessage']);
 
     //Admins paths:
     $router->addRoute('GET', '/api/admin/users', [UserController::class, 'getUsers']);
@@ -88,6 +90,7 @@ switch ($routeStatus[0]) {
             '/user/ticket' => ['user'],
             '/api/tags' => ['user', 'admin'],
             '/api/statuses' => ['user', 'admin'],
+            '/api/ticket/{id}/message' => ['user', 'admin'],
             '/api/admin/users' => ['admin'],
             '/api/admin/user/{id}' => ['admin'],
             '/api/admin/tags' => ['admin'],

@@ -70,4 +70,13 @@ class TicketModel extends BasicModel
         ];
         return $this->update($ticketId, $data);
     }
+
+    public function updateMessage(int $ticketId, string $messageId, int $updaterId): bool
+    {
+        $data = [
+            'updater_id' => $updaterId,
+            'message_id' => $messageId,
+        ];
+        return $this->update($ticketId, $data);
+    }
 }
