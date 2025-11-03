@@ -83,7 +83,7 @@ class AuthController
                     "httponly" => true,
                     "secure" => true,
                     "samesite" => "None",
-                    "domain" => "{${$this->config['FE_DOMAIN'] ?? 'localhost'}}",
+                    "domain" => $this->config['FE_DOMAIN'],
                     "path" => "/",
                 ]
             );
@@ -107,7 +107,7 @@ class AuthController
                 "httponly" => true,
                 "secure" => true,
                 "samesite" => "None",
-                "domain" => "{${$this->config['FE_DOMAIN'] ?? 'localhost'}}",
+                "domain" => $this->config['FE_DOMAIN'],
                 "path" => "/",
             ]
         );
