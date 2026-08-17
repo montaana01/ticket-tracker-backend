@@ -12,9 +12,11 @@ class DB
     private string $dbname;
     private string $username;
     private string $password;
+    /** @var array<int, mixed> */
     private array $options;
     public PDO $db;
 
+    /** @param array{hostname: string, port: int, dbname: string, username: string, password: string, options: array<int, mixed>} $params */
     public function __construct(array $params) {
         $this->hostname = $params['hostname'];
         $this->port = $params['port'];
@@ -25,7 +27,7 @@ class DB
         $this->createInstance();
     }
 
-    private function createInstance() {
+    private function createInstance(): PDO {
         try {
             $this->db = new PDO(  "mysql:host=$this->hostname;port=$this->port;dbname=$this->dbname",
                 $this->username,
@@ -34,7 +36,6 @@ class DB
             return $this->db;
         } catch (PDOException $error) {
             Response::json(['error' => 'Error while connecting to DB: ' . $error->getMessage()], 500);
-            exit;
         }
     }
 }

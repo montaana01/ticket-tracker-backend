@@ -8,9 +8,11 @@ use TicketTracker\Helpers\Response;
 class AuthMiddleware
 {
     private JwtAuth $jwtAuth;
+    /** @var list<string>|null */
     private ?array $requiredRoles;
 
-    public function __construct(array $requiredRoles = null)
+    /** @param list<string>|null $requiredRoles */
+    public function __construct(?array $requiredRoles = null)
     {
         $this->jwtAuth = new JwtAuth();
         $this->requiredRoles = $requiredRoles;
@@ -22,24 +24,16 @@ class AuthMiddleware
 
         if (!$token) {
             Response::json(['error' => 'Token required'], 401);
-            exit;
         }
 
         try {
             $user = $this->jwtAuth->validateToken($token);
         } catch (\Exception $e) {
             Response::json(['error' => $e->getMessage()], 401);
-            exit;
-        }
-
-        if (!$user) {
-            Response::json(['error' => 'Invalid or expired token'], 401);
-            exit;
         }
 
         if ($this->requiredRoles && !in_array($user->role, $this->requiredRoles)) {
             Response::json(['error' => 'Insufficient permissions. Required roles: ' . implode(', ', $this->requiredRoles)], 403);
-            exit;
         }
 
         return $user;

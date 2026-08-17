@@ -8,6 +8,7 @@ class UserModel extends BasicModel
         parent::__construct('users');
     }
 
+    /** @return array<string, mixed>|null */
     public function getByUsername(string $username): ?array
     {
         $stmt = $this->connection->prepare("SELECT * FROM users WHERE username = ?");

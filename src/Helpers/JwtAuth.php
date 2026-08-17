@@ -33,7 +33,7 @@ class JwtAuth
         return JWT::encode($payload, $this->token, 'HS256');
     }
 
-    public function validateToken(string $token): \stdClass|array
+    public function validateToken(string $token): \stdClass
     {
         try {
             return JWT::decode($token, new Key($this->token, 'HS256'));

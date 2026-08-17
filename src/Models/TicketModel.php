@@ -8,6 +8,7 @@ class TicketModel extends BasicModel
         parent::__construct('tickets');
     }
 
+    /** @return list<object> */
     public function getByUserId(int $userId): array
     {
         //here we should implement messages join
@@ -25,6 +26,7 @@ class TicketModel extends BasicModel
         return $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
     }
 
+    /** @return list<object> */
     public function getAll(): array
     {
         $sql = "
@@ -37,9 +39,13 @@ class TicketModel extends BasicModel
             ORDER BY t.created_at DESC
         ";
         $stmt = $this->connection->query($sql);
+        if ($stmt === false) {
+            throw new \RuntimeException('Unable to fetch tickets');
+        }
         return $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
     }
 
+    /** @param array{title: string, description: string, tag_id: int|string, author_id: int} $data */
     public function create(array $data): int
     {
         $ticketData = [
@@ -71,7 +77,7 @@ class TicketModel extends BasicModel
         return $this->update($ticketId, $data);
     }
 
-    public function updateMessage(int $ticketId, string $messageId, int $updaterId): bool
+    public function updateMessage(int $ticketId, int $messageId, int $updaterId): bool
     {
         $data = [
             'updater_id' => $updaterId,

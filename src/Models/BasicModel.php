@@ -9,13 +9,14 @@ class BasicModel
     protected string $tableName = '';
     protected \PDO $connection;
 
-    public function __construct($tableName)
+    public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
         $config = require __DIR__ . '/../Config/params.php';
         $this->connection = (new DB($config['db']))->db;
     }
 
+    /** @return array<string, mixed>|null */
     public function get(int $id): ?array
     {
         $stmt = $this->connection->prepare("SELECT * FROM {$this->tableName} WHERE id = ?");
@@ -24,14 +25,19 @@ class BasicModel
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
+    /** @return list<array<string, mixed>|object> */
     public function getAll(): array
     {
         $sql = "SELECT * FROM {$this->tableName}";
         $stmt = $this->connection->query($sql);
+        if ($stmt === false) {
+            throw new \RuntimeException('Unable to fetch records');
+        }
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /** @param array<string, scalar|null> $data */
     public function create(array $data): int
     {
         $fields = implode(', ', array_keys($data));
@@ -44,6 +50,7 @@ class BasicModel
         return (int)$this->connection->lastInsertId();
     }
 
+    /** @param array<string, scalar|null> $data */
     public function update(int $id, array $data): bool
     {
         $setPlaceHolders = [];

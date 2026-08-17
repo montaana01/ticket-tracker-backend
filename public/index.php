@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
 $uri = rtrim($uri, '/');
 if (empty($uri)) $uri = '/';
 
@@ -127,7 +127,6 @@ switch ($routeStatus[0]) {
             'error' => 'Route not found',
             'message' => 'No matching route for URI: ' . $uri
         ], 404);
-        break;
 
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeStatus[1];
@@ -139,5 +138,4 @@ switch ($routeStatus[0]) {
             ],
             'uri' => $uri
         ], 405);
-        break;
 }
