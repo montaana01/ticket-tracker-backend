@@ -25,7 +25,7 @@ class DB
         $this->createInstance();
     }
 
-    private function createInstance() {
+    private function createInstance(): PDO {
         try {
             $this->db = new PDO(  "mysql:host=$this->hostname;port=$this->port;dbname=$this->dbname",
                 $this->username,
@@ -34,7 +34,6 @@ class DB
             return $this->db;
         } catch (PDOException $error) {
             Response::json(['error' => 'Error while connecting to DB: ' . $error->getMessage()], 500);
-            exit;
         }
     }
 }

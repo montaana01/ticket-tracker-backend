@@ -14,7 +14,7 @@ class UserController
         $this->userModel = new UserModel();
     }
 
-    public function create(string $username, string $password)
+    public function create(string $username, string $password): array
     {
         try {
             $userData = [

@@ -31,9 +31,9 @@ class AuthController
     public function signUp(): void
     {
         try {
-            $data = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode(file_get_contents('php://input') ?: '', true, 512, JSON_THROW_ON_ERROR);
 
-            if (!$data || empty($data['username']) || empty($data['password']) || !$data['username'] || !$data['password']) {
+            if (empty($data['username']) || empty($data['password'])) {
                 Response::json(['error' => 'Invalid registration data!'], 400);
             }
 
@@ -42,11 +42,6 @@ class AuthController
             }
 
             $response = $this->userController->create($data['username'], $data['password']);
-            if (!$response['success']) {
-                Response::json(['error' => 'User creation failed: ' . $response['error']], 500);
-                return;
-            }
-
             Response::json([
                 'data' => ['id' => $response['user_id']],
                 'message' => $response['message']
@@ -56,14 +51,13 @@ class AuthController
                 'error' => 'Invalid JSON format',
                 'message' => 'JSON parsing error: ' . $exception->getMessage()
             ], 400);
-            return;
         }
     }
 
     public function signIn(): void
     {
         try {
-            $data = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode(file_get_contents('php://input') ?: '', true, 512, JSON_THROW_ON_ERROR);
             $user = $this->userModel->getByUsername($data['username'] ?? '');
 
             if (!$user) {
@@ -93,7 +87,6 @@ class AuthController
                 'error' => 'Invalid JSON format',
                 'message' => 'JSON parsing error: ' . $exception->getMessage()
             ], 400);
-            return;
         }
     }
 
@@ -121,7 +114,6 @@ class AuthController
 
         if (!$token) {
             Response::json(['data' => ['authenticated' => false]]);
-            return;
         }
 
         try {
@@ -129,7 +121,6 @@ class AuthController
             $user = $this->userModel->get($payload->user);
             if (!$user) {
                 Response::json(['data' => ['authenticated' => false]]);
-                return;
             }
 
             Response::json(['data' => [

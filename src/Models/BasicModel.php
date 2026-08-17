@@ -9,7 +9,7 @@ class BasicModel
     protected string $tableName = '';
     protected \PDO $connection;
 
-    public function __construct($tableName)
+    public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
         $config = require __DIR__ . '/../Config/params.php';
@@ -28,6 +28,9 @@ class BasicModel
     {
         $sql = "SELECT * FROM {$this->tableName}";
         $stmt = $this->connection->query($sql);
+        if ($stmt === false) {
+            throw new \RuntimeException('Unable to fetch records');
+        }
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

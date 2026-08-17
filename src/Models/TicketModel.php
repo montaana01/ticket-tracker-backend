@@ -37,6 +37,9 @@ class TicketModel extends BasicModel
             ORDER BY t.created_at DESC
         ";
         $stmt = $this->connection->query($sql);
+        if ($stmt === false) {
+            throw new \RuntimeException('Unable to fetch tickets');
+        }
         return $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
     }
 
@@ -71,7 +74,7 @@ class TicketModel extends BasicModel
         return $this->update($ticketId, $data);
     }
 
-    public function updateMessage(int $ticketId, string $messageId, int $updaterId): bool
+    public function updateMessage(int $ticketId, int $messageId, int $updaterId): bool
     {
         $data = [
             'updater_id' => $updaterId,
