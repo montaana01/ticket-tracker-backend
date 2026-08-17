@@ -8,6 +8,7 @@ class TicketModel extends BasicModel
         parent::__construct('tickets');
     }
 
+    /** @return list<object> */
     public function getByUserId(int $userId): array
     {
         //here we should implement messages join
@@ -25,6 +26,7 @@ class TicketModel extends BasicModel
         return $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
     }
 
+    /** @return list<object> */
     public function getAll(): array
     {
         $sql = "
@@ -43,6 +45,7 @@ class TicketModel extends BasicModel
         return $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
     }
 
+    /** @param array{title: string, description: string, tag_id: int|string, author_id: int} $data */
     public function create(array $data): int
     {
         $ticketData = [

@@ -8,8 +8,10 @@ use TicketTracker\Helpers\Response;
 class AuthMiddleware
 {
     private JwtAuth $jwtAuth;
+    /** @var list<string>|null */
     private ?array $requiredRoles;
 
+    /** @param list<string>|null $requiredRoles */
     public function __construct(?array $requiredRoles = null)
     {
         $this->jwtAuth = new JwtAuth();

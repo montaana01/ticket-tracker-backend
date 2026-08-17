@@ -2,6 +2,7 @@
 namespace TicketTracker\Helpers;
 
 class Response {
+    /** @param array{data?: mixed, message?: mixed, error?: mixed} $data */
     public static function json(array $data, int $status = 200): never
     {
         http_response_code($status);

@@ -12,9 +12,11 @@ class DB
     private string $dbname;
     private string $username;
     private string $password;
+    /** @var array<int, mixed> */
     private array $options;
     public PDO $db;
 
+    /** @param array{hostname: string, port: int, dbname: string, username: string, password: string, options: array<int, mixed>} $params */
     public function __construct(array $params) {
         $this->hostname = $params['hostname'];
         $this->port = $params['port'];

@@ -13,6 +13,20 @@ class AuthController
     private JwtAuth $JwtAuth;
     private UserModel $userModel;
     private UserController $userController;
+    /**
+     * @var array{
+     *     db: array{
+     *         hostname: string,
+     *         port: string,
+     *         dbname: string,
+     *         username: string,
+     *         password: string,
+     *         options: array<int, int>
+     *     },
+     *     JWT: string,
+     *     FE_DOMAIN: string,
+     * }
+     */
     private array $config;
 
     public function __construct()

@@ -14,6 +14,7 @@ class UserController
         $this->userModel = new UserModel();
     }
 
+    /** @return array{success: true, user_id: int, message: string} */
     public function create(string $username, string $password): array
     {
         try {
@@ -37,7 +38,7 @@ class UserController
         }
     }
 
-    public function getProfile(object $user): void
+    public function getProfile(\stdClass $user): never
     {
         try {
             $userId = $user->user;
@@ -45,7 +46,6 @@ class UserController
 
             if (!$userData) {
                 Response::json(['error' => 'User not found'], 404);
-                return;
             }
             unset($userData['password_hash']);
 
@@ -62,8 +62,8 @@ class UserController
     {
         try {
             $users = $this->userModel->getAll();
-            $users = array_map(static function ($userData) {
-                unset($userData['password']);
+            $users = array_map(static function (array $userData): array {
+                unset($userData['password_hash']);
                 return $userData;
             }, $users);
             Response::json(['data' => $users]);
@@ -72,16 +72,15 @@ class UserController
         }
     }
 
-    public function getUserById($user, $id)
+    public function getUserById(\stdClass $user, string $id): never
     {
         try {
             if ($user->role === 'user') {
-                return Response::json(['error' => 'Access denied'], 403);
+                Response::json(['error' => 'Access denied'], 403);
             }
-            $userData = $this->userModel->get($id);
+            $userData = $this->userModel->get((int) $id);
             if (!$userData) {
                 Response::json(['error' => 'User not found'], 404);
-                return;
             }
             unset($userData['password_hash']);
             Response::json([

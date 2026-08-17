@@ -16,6 +16,7 @@ class BasicModel
         $this->connection = (new DB($config['db']))->db;
     }
 
+    /** @return array<string, mixed>|null */
     public function get(int $id): ?array
     {
         $stmt = $this->connection->prepare("SELECT * FROM {$this->tableName} WHERE id = ?");
@@ -24,6 +25,7 @@ class BasicModel
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
     }
 
+    /** @return list<array<string, mixed>|object> */
     public function getAll(): array
     {
         $sql = "SELECT * FROM {$this->tableName}";
@@ -35,6 +37,7 @@ class BasicModel
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /** @param array<string, scalar|null> $data */
     public function create(array $data): int
     {
         $fields = implode(', ', array_keys($data));
@@ -47,6 +50,7 @@ class BasicModel
         return (int)$this->connection->lastInsertId();
     }
 
+    /** @param array<string, scalar|null> $data */
     public function update(int $id, array $data): bool
     {
         $setPlaceHolders = [];
